@@ -58,3 +58,63 @@ boolean isValidBST_healper(TreeNode root, TreeNode min, TreeNode max){
     return isValidBST_healper(root.left, min, root)
         && isValidBST_healper(root.right, root, max);
 }
+
+// 在BST中查找一个数是否存在
+boolean isInBST(TreeNode root, int target) {
+    if (root == null) return false;
+    if (root.val == target) return true;
+
+    return isInBST(root.left, target) || isInBST(root.right, target);
+}
+
+// better solution: using the BST property
+// binary search
+boolean isInBST(TreeNode root, int target) {
+    if (root == null) return false;
+    if (root.val == target) return true;
+
+    if (root.val < target) return isInBST(root.right, target);
+    if (root.val > target) return isInBST(root.left, target);
+}
+
+// 抽象出BST框架
+void BST(TreeNode root, int target) {
+    // base cases
+    if (root == null) return false
+    if (root.val == target){
+        // 找到目标，做什么(TODO)
+    }
+
+    if (root.val < target) {
+        BST(root.right, target);
+    }
+
+    if (root.val > target) {
+        BST(root.left, target);
+    }
+}
+
+// 在BST中插入一个数 (inplace, return the updated BST)
+TreeNode insertIntoBST(TreeNode root, int data) { 
+    if (root == null) {
+        return new TreeNode(data);
+    }
+    if (root.val == data) {
+        // some error message: 
+        // can't insert a number that already exists in the BST
+    }
+    if (root.val < data) {
+        // don't forget to assign it to root.right
+        // it's not a void method!
+        root.right = insertIntoBST(root.right, data);
+    }
+
+    if (root.val > data) {
+        root.left = insertIntoBST(root.left, data);
+    }
+
+    return root; // don't forget this too
+}
+
+
+// 从BST中删除一个数
