@@ -118,3 +118,70 @@ TreeNode insertIntoBST(TreeNode root, int data) {
 
 
 // 从BST中删除一个数
+// 思路：先找再改
+TreeNode deleteNode(TreeNode root, int key) {
+    if (root.val = key){
+        // 找到啦, 进行删除
+    }
+    else if (root.val > key) {
+        root.left = deleteNode(root.left, key);
+    }
+    else if (root.val < key) {
+        root.right = deleteNode(root.right, key);
+    }
+    return root;
+}
+
+// 如何删除？难点 - 不能破坏BST性质
+// 1. no child - leaf node: just delete it (当场去世)
+    if (root.left == null && root.right == null) return null;
+// 2. one child - 让这个孩子接替自己的位置
+    else if (root.left == null) return root.right;
+    else if (root.right == null) return root.left;
+// 3. two children - 找 max node in left subtree 或者 min node in right subtree
+    if (root.left != null && root.right != null) {
+        // find
+        TreeNode minNode = getMin(root.right);
+        // replace 
+        root.val = minNode.val;
+        // delete
+        root.right = deleteNode(root.right, minNode.val);
+    }
+
+// complete code
+TreeNode deleteNode(TreeNode root, int key) {
+    if (root == null) return null;
+    if (root.val == key) {
+        // case 1. and 2.
+        // (remove else as we want these two lines to cover case 1 too)
+        if (root.left == null) return root.right;
+        if (root.right == null) return root.left;
+        // case 3: two children
+        if (root.left != null && root.right != null) {
+            TreeNode minNode = getMin(root.right);
+            root.val = minNode.val;
+            root.right = deleteNode(root.right, minNode.val);
+        }
+    }
+
+    else if (root.val > key) {
+        root.left = deleteNode(root.left, key);
+    }
+    else if (root.val < key) {
+        root.right = deleteNode(root.right, key);
+    }
+    return root;
+}
+
+/** code to get the min node given BST subtree */
+// just get the left-most node
+TreeNode getMin(TreeNode node) {
+    while (node.left != null) {
+        node = node.left;
+    }
+    return node;
+}
+
+// PS: 这个方法并不完美 因为实际数据可能会很大我们不应该
+// 去靠修改节点内部的值去交换节点
+// 实际实现是通过一系列的链表操作改指针
