@@ -89,7 +89,7 @@ return slow;
 
 Initialize left = 0, right = nums.length-1
 
-#### 1. Binary Search
+1. Binary Search
 
 ```java
 int binarySearch(int[] nums, int target) {
@@ -111,3 +111,41 @@ int binarySearch(int[] nums, int target) {
 }
 ```
 
+2. Two Sum variant: given a sorted array
+index staring at 1
+
+```java
+int[] twoSUm(int[] nums, int target) {
+    int left = 0; right = nums.length - 1;
+    while (left < right) {
+        int sum = nums[left] + nums[right];
+        if (sum == target) {
+            return new int[] {left + 1, right + 1};
+        }
+        else if (sum < target) {
+            left++; // make sum larger
+        }
+        else if (sum > target) {
+            right--;
+        }
+    }
+    return new int[] {-1, -1};
+}
+```
+
+3. Reverse an array
+[1, 2, 3, 4] ====> [4, 3, 2, 1]
+
+```java
+void reverse(int[] nums) {
+    int left = 0;
+    int right = nums.length-1;
+    while (left < right){
+        int temp = nums[left];
+        nums[left] = nums[right];
+        nums[right] = temp;
+        left++;
+        right--;
+    }
+}
+```
