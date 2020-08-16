@@ -96,7 +96,6 @@ Solution: 2 maps. `needs` and `window`
 
 ```cpp
 string minWindow(string s, string t) {
-    string s, t;
     // 在s中找t的最小覆盖子串
     int left = 0; right = 0;
     int start = 0, minLen = INT_MAX;
@@ -120,7 +119,7 @@ string minWindow(string s, string t) {
         } 
         right++; // expand
 
-        // if the window is large enought -> shrink
+        // if the window is large enough -> shrink
         while (macth == needs.size()) {
             if (right - left < minLen) { // init at maxint
                 // update the substring position and length
@@ -143,3 +142,155 @@ string minWindow(string s, string t) {
 ```
 
 Analysis: Time complexity: O(M + N) where M and N are the length of s and t. Because we used a for loop to traverse `t` to initialize `needs`, that's O(N); and the two while loops will execute `2M` times at most, so O(M)
+
+--------
+Problem 2: Find anagram - given a string `s` and a non-empty string `p` 找到s中所有是p的字母异位词的子串，返回这些子串的起始索引
+
+字母异位 (anagram) - letters are the same but not in the same sequence
+
+example:  
+input: s: "cbaebabacd", p: "abc"\
+output: [0, 6]\
+because "cba" and "bac"
+
+solution: same idea, slide the window until the condition is met and then shrink back until it's no longer met. Update the result. 
+
+```cpp
+vector<int> findAnagrams(string s, string t) {
+    // return an array
+    vector<int> res;
+    int left = 0, right = 0;
+    unordered_map<char, int> needs;
+    unordered_map<char, int> window;
+    for (char c : t){
+        needs[c]++; // initialize needs{}
+    }
+    int match = 0;
+
+    while (right < s.size()) {
+        char c1 = s[right];
+        if (needs.count(c1)) {
+            window[c1]++;
+            if (window[c1] == needs[c1]) {
+                match++;
+            }
+        }
+        right++; // expand
+
+        while (match == needs.size()) {
+            // if the size of the window is right
+            // put the starting index left to res
+            if (right - left == t.size()) {
+                res.push_back(left);
+            }
+            char c2 = s[left];
+            if (needs.count(c2)) {
+                window[c2]--;
+                if (window[c2] < needs[c2]){
+                    match-;
+                }
+            }
+            left++;
+        }
+    }
+    return res;
+}
+```
+
+The only difference from the last problem is that this time we're looking for substrings of the same length intead of shortest length
+
+
+---------
+3. 无重复字符的最长子串
+longest substring with all unique characters
+
+example:\
+input: "abcabcbb"\
+output: 3\
+becasue: "abc"
+
+input: "pwwkew"    output: 3
+
+Note that you're looking for substring not sub-sequence, so it has to be contiguous 
+
+solution: slide window to right until you find repeated letters in the window, then shrink. After you no longer have repeated characters, slide to right again until the end of string.
+
+```cpp
+int lengthOfLongestSubstring(string s) {
+    int left = 0;
+    right = 0;
+    unordered_map<char, int> window;
+    int res = 0; // record the length of substring
+
+    while (right < s.size()) {
+        char c1 = s[right];
+        window[c1]++; // add a char to map
+        right++;
+
+        while (window[c1] > 1) {
+            char c2 = s[left]; // get left-most char
+            window[c2]--; // remove it from the map
+            left++; // shrink
+        }
+        // update res - whenever the window gets larger
+        res = max(res, right-left); 
+    }
+}
+```
+
+解题框架
+
+```cpp
+int left = 0, right = 0;
+
+while (right < s.size()) {
+    window.add(s[right]);
+    right++;
+
+    while (condition is met) {
+        window.remove(s[left]);
+        left++;
+    }
+}
+```
+
+The data structure for `window` is often a dict, and the condition verifier is often the difficult part. 
+
+Python3 solution for the minWindow Problem
+
+```python
+class Solution:
+    def minWindow(self, s: str, t: str):
+        # initialization
+        start, min_len = 0, float('inf')
+        left, right = 0, 0
+        res = s
+
+        # 2 dicts as counters
+        needs = Counter(t)
+        window = collections.defaultdict(int)
+        # defaultdict 在key不存在的时候默认为0 
+
+        match = 0
+
+        while right < len(s):
+            c1 = s[right]
+            if needs[c1] > 0:
+                window[c1] += 1
+                if window[c1] == needs[c1]:
+                    match +=
+            right += 1
+
+            while match == len(needs):
+                if right - left < min_len:
+                    min_len = right - left
+                    start = left
+                c2 = s[left]
+                if needs[c2] > 0:
+                    window[c2] -= 1
+                    if window[c2] < needs[c2]:
+                        match -= 1
+                left += 1
+    return s[start:start+min_len] if min_len != float('inf') else ""
+
+```
